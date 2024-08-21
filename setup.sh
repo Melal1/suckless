@@ -1,6 +1,12 @@
 #!/bin/bash
-source $HOME/dotfiles/2-Setup/Suckless/Assest.conf
 
+# Var
+source $HOME/suckless/Assest.conf
+
+
+# Creating the repository folder 
+
+mkdir $HOME/repo/
 
 
 echo -ne "
@@ -59,15 +65,14 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 
-cd $HOME/dotfiles/2-Setup/Suckless/dmenu 
+git clone 
+
+cd $HOME/suckless/dmenu 
 sudo make clean install 
 
-cd $HOME/dotfiles/2-Setup/Suckless/dwm
+cd $HOME/suckless/dwm
 sudo make clean install 
 
-
-cd $HOME/dotfiles/2-Setup/Suckless/dwm
-sudo make clean install 
 
 
 
@@ -99,7 +104,7 @@ elif [[ "$An" == "n" ]] ; then
 	echo "okay skipping ..."
 else 
 	echo -ne  "
-       
+       dotfiles/2-Setup/S
 	Invalid option , please choose (y/n)
        
 	"
@@ -117,6 +122,10 @@ fn_dpen
                           Installing Fonts
 -------------------------------------------------------------------------
 "
+git clone https://github.com/Melal1/assests.git $HOME/repo/assests
+
+sudo cp -r $HOME/repo/assests/font-assests/fonts/* /usr/share/fonts/
+
 
 
 
@@ -128,7 +137,21 @@ fn_dpen
 -------------------------------------------------------------------------
 "
 
+sleep 1
 
 
+mkdir $HOME/fontconfig/
+
+cp $HOME/repo/assests/font-assests/fonts.conf $HOME/fontconfig/
+
+fc-cache -fv
 
 
+  echo -ne "
+-------------------------------------------------------------------------
+                          installing .xinitrc file
+            ^note that you can edit ~/.xinitrc later
+-------------------------------------------------------------------------
+"
+
+cp $HOME/repo/assests/autostart/.xinitrc $HOME/
