@@ -21,6 +21,8 @@ echo -e "
 
 sleep 2
 
+# Var
+source $HOME/suckless/Assest.conf
 
 
 echo -e "
@@ -30,77 +32,45 @@ echo -e "
 "
 
 
+
+
+
+
 fn_inputs() {
-    echo -ne "Please enter a valid email: "
+    echo -ne "\nPlease enter a valid email: "
     read EMAIL
 
-    #  Email validation
-    local regex="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    # Email validation
+    local regex="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
 
-    
     if [[ $EMAIL =~ $regex ]]; then
-        echo "Your email address is '${EMAIL}'."
-        echo -ne "Is that okay? (Y/n): "
+        echo -e "\nYour email address is '${EMAIL}'."
+        echo -n "Is that okay? (y/n): "
         read confirmation
 
         
         if [[ $confirmation == [yY] ]]; then
-            echo "Email confirmed: ${EMAIL}"
-            
+            echo -e "\nEmail confirmed: ${EMAIL}"
+            # Generate SSH key
+            ssh-keygen -t ed25519 -f "${ssh_PATH}/id_ed25519" -C "${EMAIL}" -q -N ""
+            echo -e "\nSsh key generated .\nPlease copy it form ~/.ssh/ and put it on github"
+            sleep 2
         elif [[ $confirmation == [nN] ]]; then
-            echo "Okay.\n"
+            echo -e "\nOkay. Please enter your email again."
             fn_inputs  
         else
-            echo "Invalid input. \nPlease enter 'y' for yes or 'n' for no.\n"
+            echo -e "Invalid input. \nPlease enter 'y' for yes or 'n' for no.\n"
             fn_inputs  
         fi
     else
-        echo -ne "Invalid email address.\nPlease try again.\n"
+        echo -ne "\nInvalid email address.\nPlease try again.\n"
         fn_inputs  
     fi
 }
 
-
 fn_inputs
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-echo -ne "
--------------------------------------------------------------------------
-                          Installing Display Server
--------------------------------------------------------------------------
-"
-
-
-
-
-
-
-# Var
-source $HOME/suckless/Assest.conf
-
-
-# Creating the repository folder 
-
-mkdir $HOME/repo/
-
-
-
-
-
-
+eval "$(ssh-agent -s)"
 
 
 
@@ -139,7 +109,9 @@ sudo make clean install
 cd $HOME/suckless/dwm
 sudo make clean install 
 
+# Creating the repository folder 
 
+mkdir $HOME/repo/
 
 
 
