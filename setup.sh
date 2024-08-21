@@ -20,7 +20,7 @@ echo -e "
 "
 
 sleep 2
-
+sudo rm -rf 2-Setup.sh
 # Var
 source $HOME/suckless/Assest.conf
 
@@ -184,6 +184,15 @@ cp $HOME/repo/assests/font-assests/fonts.conf $HOME/fontconfig/
 
 fc-cache -fv
 
+  echo -ne "
+-------------------------------------------------------------------------
+                          Copying Wallpapers
+            ^note that you can find wallpapers ~/Pictures/Wallpapers
+-------------------------------------------------------------------------
+"
+sleep 1
+mkdir -r $HOME/Pictures/Wallpapers
+cp $HOME/repo/assests/wallpapers/*  $HOME/Pictures/Wallpapers
 
   echo -ne "
 -------------------------------------------------------------------------
@@ -191,6 +200,27 @@ fc-cache -fv
             ^note that you can edit ~/.xinitrc later
 -------------------------------------------------------------------------
 "
+rm -rf $HOME/.xinitrc
 
-cp $HOME/repo/assests/autostart/.xinitrc $HOME/
 
+
+cat << 'REALEND' > $HOME/.xinitrc 
+
+export PATH="$HOME/.local/bin:$PATH" &
+feh --bg-scale $HOME/Pictures/Wallpapers/1.jpg &
+exec dwm
+
+
+REALEND
+
+
+
+
+ echo -ne "
+-------------------------------------------------------------------------
+                          Adding keyboard layouts 
+                          Default(ar,en) you can edit this on /etc/X11/xorg.conf.d/00-keyboard.conf
+                          Default key to change layout is win + space
+-------------------------------------------------------------------------
+"
+localectl set-x11-keymap us,ara ,pc101 qwerty grp:win_space_toggle
