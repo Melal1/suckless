@@ -1,9 +1,7 @@
 #!/bin/bash
 
-
 echo -e "
 -------------------------------------------------------------------------
-
   ▄▄▄▄███▄▄▄▄      ▄████████  ▄█          ▄████████  ▄█      
 ▄██▀▀▀███▀▀▀██▄   ███    ███ ███         ███    ███ ███      
 ███   ███   ███   ███    █▀  ███         ███    ███ ███      
@@ -15,15 +13,15 @@ echo -e "
                              ▀                      ▀        
 -------------------------------------------------------------------------
           Suckless Setup Script 
-	  Run this script after a clean install 
-------------------------------------------------------------------------
+          Run this script after a clean install 
+-------------------------------------------------------------------------
 "
 
 sleep 2
 sudo rm -rf 2-Setup.sh
-# Var
-source $HOME/suckless/Assest.conf
 
+# Source configuration
+source "$HOME/suckless/Assest.conf"
 
 echo -e "
 -------------------------------------------------------------------------
@@ -31,14 +29,9 @@ echo -e "
 -------------------------------------------------------------------------
 "
 
-
-
-
-
-
 fn_inputs() {
     echo -ne "\nPlease enter a valid email: "
-    read EMAIL
+    read -r EMAIL
 
     # Email validation
     local regex="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
@@ -46,14 +39,13 @@ fn_inputs() {
     if [[ $EMAIL =~ $regex ]]; then
         echo -e "\nYour email address is '${EMAIL}'."
         echo -n "Is that okay? (y/n): "
-        read confirmation
+        read -r confirmation
 
-        
         if [[ $confirmation == [yY] ]]; then
             echo -e "\nEmail confirmed: ${EMAIL}"
             # Generate SSH key
             ssh-keygen -t ed25519 -f "${ssh_PATH}/id_ed25519" -C "${EMAIL}" -q -N ""
-            echo -e "\nSsh key generated .\nPlease copy it form ~/.ssh/ and put it on github"
+            echo -e "\nSSH key generated. Please copy it from ~/.ssh/ and put it on GitHub."
             sleep 2
         elif [[ $confirmation == [nN] ]]; then
             echo -e "\nOkay. Please enter your email again."
@@ -72,29 +64,29 @@ fn_inputs
 
 eval "$(ssh-agent -s)"
 
-
-
-
 echo -ne "
 -------------------------------------------------------------------------
                           Installing Display Server
 -------------------------------------------------------------------------
 "
 
- PKG=("xorg" "xorg-xinit" ) 
+PKG=("xorg" "xorg-xinit") 
 
 for pkg in "${PKG[@]}"; do
-    echo 'Installing "$pkg" ....' 
+    echo "Installing $pkg ...." 
     sudo pacman -S "$pkg" --noconfirm --needed
-
-
-    
 done
 
-sudo pacman -S "${DPN[@]}" --noconfirm --needed
+echo -ne "
+-------------------------------------------------------------------------
+                          Installing additional packages
+-------------------------------------------------------------------------
+"
 
-
-
+for pkg1 in "${DPN[@]}"; do
+    echo "Installing $pkg1 ...." 
+    sudo pacman -S "$pkg1" --noconfirm --needed
+done
 
 echo -ne "
 -------------------------------------------------------------------------
@@ -102,18 +94,14 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 
-
-cd $HOME/suckless/dmenu 
+cd "$HOME/suckless/dmenu" || exit
 sudo make clean install 
 
-cd $HOME/suckless/dwm
+cd "$HOME/suckless/dwm" || exit
 sudo make clean install 
 
 # Creating the repository folder 
-
-mkdir $HOME/repo/
-
-
+mkdir -p "$HOME/repo/"
 
 echo -ne "
 -------------------------------------------------------------------------
@@ -122,53 +110,40 @@ echo -ne "
 "
 
 fn_dpen() {
-echo -ne "Do you want to install Audio Server (Pipewire) ? (y/n) "
-read An
+    echo -ne "Do you want to install Audio Server (Pipewire)? (y/n) "
+    read -r An
 
-if [[ "$An" == "y" ]] ; then 
-
-
-  echo -ne "
+    if [[ "$An" == "y" ]]; then 
+        echo -ne "
 -------------------------------------------------------------------------
                           Installing Audio Server
 -------------------------------------------------------------------------
 "
-echo sudo pacman -S "${pipewire[@]}" --noconfirm --needed
+        sudo pacman -S "${pipewire[@]}" --noconfirm --needed
 
-
-
-	
-elif [[ "$An" == "n" ]] ; then 
-	echo "okay skipping ..."
-else 
-	echo -ne  "
-       dotfiles/2-Setup/S
-	Invalid option , please choose (y/n)
+    elif [[ "$An" == "n" ]]; then 
+        echo "Okay, skipping..."
+    else 
+        echo -ne  "
+       Invalid option, please choose (y/n)
        
 	"
-	fn_dpen
-fi 
-
+        fn_dpen
+    fi 
 }
 
 fn_dpen
 
-
-
-  echo -ne "
+echo -ne "
 -------------------------------------------------------------------------
                           Installing Fonts
 -------------------------------------------------------------------------
 "
-git clone git@github.com:Melal1/assests.git $HOME/repo/assests
+git clone https://github.com/Melal1/assests.git "$HOME/repo/assests"
 
-sudo cp -r $HOME/repo/assests/font-assests/fonts/* /usr/share/fonts/
+sudo cp -r "$HOME/repo/assests/font-assests/fonts/"* /usr/share/fonts/
 
-
-
-
-
-  echo -ne "
+echo -ne "
 -------------------------------------------------------------------------
                           Applying Fontconfig File
             ^note that you can edit ~/.config/fontconfig/fonts.conf later
@@ -177,50 +152,40 @@ sudo cp -r $HOME/repo/assests/font-assests/fonts/* /usr/share/fonts/
 
 sleep 1
 
-
-mkdir -r $HOME/.config/fontconfig/
-
-cp $HOME/repo/assests/font-assests/fonts.conf $HOME/.config/fontconfig/
+mkdir -p "$HOME/.config/fontconfig/"
+cp "$HOME/repo/assests/font-assests/fonts.conf" "$HOME/.config/fontconfig/"
 
 fc-cache -fv
 
-  echo -ne "
+echo -ne "
 -------------------------------------------------------------------------
                           Copying Wallpapers
-            ^note that you can find wallpapers ~/Pictures/Wallpapers
+            ^note that you can find wallpapers in ~/Pictures/Wallpapers
 -------------------------------------------------------------------------
 "
 sleep 1
-mkdir -r $HOME/Pictures/Wallpapers
-cp $HOME/repo/assests/wallpapers/*  $HOME/Pictures/Wallpapers
+mkdir -p "$HOME/Pictures/Wallpapers"
+cp "$HOME/repo/assests/wallpapers/"* "$HOME/Pictures/Wallpapers"
 
-  echo -ne "
+echo -ne "
 -------------------------------------------------------------------------
-                          installing .xinitrc file
+                          Installing .xinitrc file
             ^note that you can edit ~/.xinitrc later
 -------------------------------------------------------------------------
 "
-rm -rf $HOME/.xinitrc
+rm -rf "$HOME/.xinitrc"
 
-
-
-cat << 'REALEND' > $HOME/.xinitrc 
-
+cat << 'REALEND' > "$HOME/.xinitrc"
 export PATH="$HOME/.local/bin:$PATH" &
-feh --bg-scale $HOME/Pictures/Wallpapers/1.jpg &
+feh --bg-scale "$HOME/Pictures/Wallpapers/1.jpg" &
 exec dwm
-
-
 REALEND
 
-
-
-
- echo -ne "
+echo -ne "
 -------------------------------------------------------------------------
                           Adding keyboard layouts 
-                          Default(ar,en) you can edit this on /etc/X11/xorg.conf.d/00-keyboard.conf
+                          Default (ar,en) you can edit this on /etc/X11/xorg.conf.d/00-keyboard.conf
                           Default key to change layout is win + space
 -------------------------------------------------------------------------
 "
-localectl set-x11-keymap us,ara ,pc101 qwerty grp:win_space_toggle
+localectl set-x11-keymap us,ara,pc101,qwerty,grp:win_space_toggle
