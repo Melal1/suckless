@@ -17,7 +17,7 @@ echo -e "
 -------------------------------------------------------------------------
 "
 
-sleep 2
+sleep 1
 sudo rm -rf 2-Setup.sh
 
 # Source configuration
@@ -107,6 +107,23 @@ sudo make clean install
 # Creating the repository folder 
 mkdir -p "$HOME/repo/"
 
+
+echo -ne "
+-------------------------------------------------------------------------
+                          Installing AUR Helper
+-------------------------------------------------------------------------
+"
+cd "$HOME/repo/"
+
+git clone https://aur.archlinux.org/paru.git
+
+cd "$HOME/repo/paru"
+
+makepkg -si --noconfirm
+
+
+
+
 echo -ne "
 -------------------------------------------------------------------------
                           Audio Server
@@ -173,6 +190,16 @@ cp "$HOME/repo/assests/wallpapers/"* "$HOME/Pictures/Wallpapers"
 
 echo -ne "
 -------------------------------------------------------------------------
+                          Adding keyboard layouts 
+                          Default (ar,en) you can edit this on /etc/X11/xorg.conf.d/00-keyboard.conf
+                          Default key to change layout is win + space
+-------------------------------------------------------------------------
+"
+localectl set-x11-keymap us,ara ,pc101 qwerty grp:alt_shift_toggle
+
+
+echo -ne "
+-------------------------------------------------------------------------
                           Installing .xinitrc file
             ^note that you can edit ~/.xinitrc later
 -------------------------------------------------------------------------
@@ -185,11 +212,30 @@ feh --bg-scale "$HOME/Pictures/Wallpapers/1.jpg" &
 exec dwm
 REALEND
 
+cleanup_fn() {
+    echo -e "Would you like to clean up the installed dependencies repositories? (Y/n): "
+    read -r cleanup_choice
+
+    if [[ "$cleanup_choice" =~ ^[yY]$ || -z "$cleanup_choice" ]]; then
+        # Remove the specified directories
+        rm -rf "$HOME/repo/paru"
+        rm -rf "$HOME/repo/assets"
+        echo -e "Cleanup complete."
+
+    elif [[ "$cleanup_choice" =~ ^[nN]$ ]]; then
+        echo -e "Okay...\nNote that all repository dependencies are stored in '$HOME/repo'."
+
+    else
+        echo -e "Invalid option.\nPlease choose 'y' or 'n'."
+        cleanup_fn  # Recursively call the function to prompt again
+    fi
+}
+
+cleanup_fn
+
 echo -ne "
 -------------------------------------------------------------------------
-                          Adding keyboard layouts 
-                          Default (ar,en) you can edit this on /etc/X11/xorg.conf.d/00-keyboard.conf
-                          Default key to change layout is win + space
+                          Setup is finished 
+                          You can reboot now ~
 -------------------------------------------------------------------------
 "
-localectl set-x11-keymap us,ara ,pc101 qwerty grp:alt_shift_toggle
