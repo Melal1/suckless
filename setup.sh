@@ -178,9 +178,9 @@ sudo cp -r $HOME/repo/assests/font-assests/fonts/* /usr/share/fonts/
 sleep 1
 
 
-mkdir $HOME/fontconfig/
+mkdir -r $HOME/.config/fontconfig/
 
-cp $HOME/repo/assests/font-assests/fonts.conf $HOME/fontconfig/
+cp $HOME/repo/assests/font-assests/fonts.conf $HOME/.config/fontconfig/
 
 fc-cache -fv
 
