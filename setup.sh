@@ -23,6 +23,19 @@ sudo rm -rf 2-Setup.sh
 # Source configuration
 source "$HOME/suckless/Assest.conf"
 
+
+
+
+echo -ne "
+-------------------------------------------------------------------------
+                          Installing additional packages
+-------------------------------------------------------------------------
+"
+
+for pkg1 in "${DPN[@]}"; do
+    echo "Installing $pkg1 ...." 
+    sudo pacman -S "$pkg1" --noconfirm --needed
+done
 echo -e "
 -------------------------------------------------------------------------
                           Generating ssh key
@@ -77,16 +90,7 @@ for pkg in "${PKG[@]}"; do
     sudo pacman -S "$pkg" --noconfirm --needed
 done
 
-echo -ne "
--------------------------------------------------------------------------
-                          Installing additional packages
--------------------------------------------------------------------------
-"
 
-for pkg1 in "${DPN[@]}"; do
-    echo "Installing $pkg1 ...." 
-    sudo pacman -S "$pkg1" --noconfirm --needed
-done
 
 echo -ne "
 -------------------------------------------------------------------------
@@ -105,15 +109,15 @@ mkdir -p "$HOME/repo/"
 
 echo -ne "
 -------------------------------------------------------------------------
-                          Installing Additional Packages 
+                          Audio Server
 -------------------------------------------------------------------------
 "
 
 fn_dpen() {
-    echo -ne "Do you want to install Audio Server (Pipewire)? (y/n) "
+    echo -ne "Do you want to install Audio Server (Pipewire)? (Y/n) "
     read -r An
 
-    if [[ "$An" == "y" ]]; then 
+    if [[ "$An" == "y" || -z "$An" ]]; then 
         echo -ne "
 -------------------------------------------------------------------------
                           Installing Audio Server
@@ -125,7 +129,7 @@ fn_dpen() {
         echo "Okay, skipping..."
     else 
         echo -ne  "
-       Invalid option, please choose (y/n)
+       Invalid option, please choose y or n
        
 	"
         fn_dpen
@@ -188,4 +192,4 @@ echo -ne "
                           Default key to change layout is win + space
 -------------------------------------------------------------------------
 "
-localectl set-x11-keymap us,ara,pc101,qwerty,grp:win_space_toggle
+localectl set-x11-keymap us,ara ,pc101 qwerty grp:alt_shift_toggle
