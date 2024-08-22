@@ -220,6 +220,9 @@ cleanup_fn() {
         # Remove the specified directories
         rm -rf "$HOME/repo/paru"
         rm -rf "$HOME/repo/assets"
+        rm -rf /2-Setup.sh 
+        rm -rf /var.conf
+        
         echo -e "Cleanup complete."
 
     elif [[ "$cleanup_choice" =~ ^[nN]$ ]]; then
