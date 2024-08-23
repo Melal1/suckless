@@ -33,6 +33,10 @@ static const char *colors[][3]      = {
 
 };
 
+#define TCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+
+
+
 /* tagging */
 static const char *tags[] = { "󰈹", "2", "3", "4", "5" };
 static const char *tagsalt[] = { "1", "2", "3", "4", "5"};
@@ -97,7 +101,7 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col2, "-nf", col1, "-sb", col1, "-sf", col2, NULL };
-static const char *termcmd[]  = { "st", NULL };
+static const char *termcmd[]  = { "urxvt", NULL };
 static const char *browser[] = {"chromium", NULL} ;
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
