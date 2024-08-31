@@ -45,8 +45,6 @@ echo -e "
 
 fn_inputs() {
 
-
-
     echo -ne "\nPlease enter a valid email: "
     read -r EMAIL
 
@@ -105,8 +103,10 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 
+chmod +wr "$HOME/suckless"
 cd "$HOME/suckless/dmenu" || exit
 sudo make clean install 
+
 
 cd "$HOME/suckless/dwm" || exit
 sudo make clean install 
@@ -225,10 +225,10 @@ cleanup_fn() {
 
     if [[ "$cleanup_choice" =~ ^[yY]$ || -z "$cleanup_choice" ]]; then
         # Remove the specified directories
-        rm -rf "$HOME/repo/paru"
-        rm -rf "$HOME/repo/assets"
-        rm -rf /2-Setup.sh 
-        rm -rf /var.conf
+        sudo rm -rf "$HOME/repo/paru"
+        sudo rm -rf "$HOME/repo/assets"
+        sudo rm -rf /2-Setup.sh 
+        sudo rm -rf /var.conf
         
         echo -e "Cleanup complete."
 
