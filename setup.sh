@@ -35,14 +35,18 @@ echo -ne "
 for pkg1 in "${DPN[@]}"; do
     echo "Installing $pkg1 ...." 
     sudo pacman -S "$pkg1" --noconfirm --needed
+    sleep 1
 done
 echo -e "
 -------------------------------------------------------------------------
-                          Generating ssh key
+                          Setup git and generating ssh key
 -------------------------------------------------------------------------
 "
 
 fn_inputs() {
+
+
+
     echo -ne "\nPlease enter a valid email: "
     read -r EMAIL
 
@@ -59,6 +63,9 @@ fn_inputs() {
             # Generate SSH key
             ssh-keygen -t ed25519 -f "${ssh_PATH}/id_ed25519" -C "${EMAIL}" -q -N ""
             echo -e "\nSSH key generated. Please copy it from ~/.ssh/ and put it on GitHub."
+            # Configuring Git
+            git config --global user.name "$(whoami)"
+            git config --global user.email "${EMAIL}"
             sleep 2
         elif [[ $confirmation == [nN] ]]; then
             echo -e "\nOkay. Please enter your email again."
