@@ -202,7 +202,7 @@ echo -ne "
                           Default key to change layout is win + space
 -------------------------------------------------------------------------
 "
-localectl set-x11-keymap us,ara ,pc101 qwerty grp:alt_shift_toggle
+localectl set-x11-keymap us,ara ,pc101 qwerty grp:win_space_toggle
 
 
 echo -ne "
