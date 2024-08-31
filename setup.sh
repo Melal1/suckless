@@ -165,13 +165,76 @@ echo -e "
 -------------------------------------------------------------------------
 "
 
+# Function to check if a package exists in the repositories
+package_exists() {
+    local package="$1"
+    sudo pacman -Fy &>/dev/null  # Update file database
+    if pacman -Fq "$package" &>/dev/null; then
+        return 0  # Package exists
+    else
+        return 1  # Package does not exist
+    fi
+}
+
+# Function to prompt for additional packages and add them to DPN array
+fn_add_additional_packages() {
+    local packages=()
+    
+    while true; do
+        echo -ne "Enter the names of additional packages to add (space-separated): "
+        read -r -a input_packages  # Read space-separated package names into an array
+
+        if [ ${#input_packages[@]} -eq 0 ]; then
+            echo "No packages entered. Exiting."
+            exit 1
+        fi
+
+        # Check each package
+        for pkg in "${input_packages[@]}"; do
+            echo "Checking if '$pkg' exists in the repositories..."
+            if package_exists "$pkg"; then
+                echo "Package '$pkg' found."
+                packages+=("$pkg")  # Add valid package to the list
+            else
+                echo "Package '$pkg' does not exist in the repositories. Please enter a valid package name."
+            fi
+        done
+
+        # If we have valid packages, break the loop
+        if [ ${#packages[@]} -gt 0 ]; then
+            break
+        fi
+    done
+
+    echo -e "\nAdding valid packages to the DPN array...\n"
+
+    # Add valid packages to the existing DPN array
+    for pkg2 in "${packages[@]}"; do
+        if [[ ! " ${DPN[@]} " =~ " ${pkg2} " ]]; then
+            DPN+=("$pkg2")
+            echo "Added '$pkg2' to the DPN array."
+        else
+            echo "'$pkg2' is already in the DPN array."
+        fi
+    done
+
+    # Display updated DPN array
+    echo -e "\nUpdated DPN array:"
+    for pkg3 in "${DPN[@]}"; do
+        echo "$pkg3"
+    done
+}
+
+fn_add_additional_packages
+
+
 # Install additional packages defined in the DPN array
-for pkg1 in "${DPN[@]}"; do
+for pkg4 in "${DPN[@]}"; do
 
     echo -ne"--------------------------------------"
-    echo "Installing $pkg1..."
+    echo "Installing $pkg4..."
     echo "--------------------------------------"
-    sudo pacman -S "$pkg1" --noconfirm --needed
+    sudo pacman -S "$pkg4" --noconfirm --needed
     sleep 1  # Short delay between installations
 done
 
