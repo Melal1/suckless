@@ -101,8 +101,8 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col2, "-nf", col1, "-sb", col1, "-sf", col2, NULL };
-static const char *termcmd[]  = { "urxvt", NULL };
-static const char *browser[] = {"chromium", NULL} ;
+static const char *termcmd[]  = { "", NULL };
+static const char *browser[] = {"zen-browser", NULL} ;
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 
@@ -181,4 +181,3 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
-
