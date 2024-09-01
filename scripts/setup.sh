@@ -23,7 +23,7 @@ fn_vr() {
     # Check user input and adjust terminal settings accordingly
     if [[ "$VIR" =~ ^[yY]$ ]]; then
         # Modify dwm config to use rxvt-unicode if on a VM
-        sed -i 's/static const char \*termcmd\[\]  = { "", NULL };/static const char \*termcmd\[\]  = { "rxvt-unicode", NULL };/' "$HOME/suckless/dwm/config.def.h"
+        sed -i 's/static const char \*termcmd\[\]  = { "", NULL };/static const char \*termcmd\[\]  = { "urxvt", NULL };/' "$HOME/suckless/dwm/config.def.h"
         DPN+=("rxvt-unicode")
     elif [[ "$VIR" =~ ^[nN]$ || -z "$VIR" ]]; then
         # Modify dwm config to use kitty if not on a VM
@@ -165,7 +165,8 @@ package_exists() {
 # Function to prompt for additional packages and add them to DPN array
 fn_add_additional_packages() {
     local packages=()
-    
+    local all_valid=true
+
     while true; do
         echo -ne "Enter the names of additional packages to add (space-separated): "
         read -r -a input_packages  # Read space-separated package names into an array
@@ -175,6 +176,8 @@ fn_add_additional_packages() {
             exit 1
         fi
 
+        all_valid=true  # Reset validity flag
+
         # Check each package
         for pkg in "${input_packages[@]}"; do
             echo "Checking if '$pkg' exists in the repositories..."
@@ -182,13 +185,16 @@ fn_add_additional_packages() {
                 echo "Package '$pkg' found."
                 packages+=("$pkg")  # Add valid package to the list
             else
-                echo "Package '$pkg' does not exist in the repositories. Please enter a valid package name."
+                echo "Package '$pkg' does not exist in the repositories."
+                sleep 1
+                all_valid=false  # Set flag to false if any package is invalid
             fi
         done
 
-        # If we have valid packages, break the loop
-        if [ ${#packages[@]} -gt 0 ]; then
-            break
+        if $all_valid; then
+            break  # Exit loop if all packages are valid
+        else
+            echo "Please enter only valid package names."
         fi
     done
 
@@ -206,14 +212,14 @@ fn_add_additional_packages() {
 
     # Display updated DPN array
     echo -e "\nUpdated DPN array:"
-    sleep 1
     for pkg3 in "${DPN[@]}"; do
         echo "$pkg3"
     done
-    sleep 3
+    sleep 2
 }
 
 fn_add_additional_packages
+
 
 
 # Install additional packages defined in the DPN array
@@ -296,7 +302,6 @@ echo -e "
 "
 
 # Apply font configuration
-sleep 1
 mkdir -p "$HOME/.config/fontconfig/"
 cp "$HOME/repo/assests/font-assests/fonts.conf" "$HOME/.config/fontconfig/"
 fc-cache -fv
@@ -309,7 +314,7 @@ echo -e "
 "
 
 # Copy wallpapers to the Pictures directory
-sleep 1
+
 mkdir -p "$HOME/Pictures/Wallpapers"
 cp "$HOME/repo/assests/wallpapers/"* "$HOME/Pictures/Wallpapers"
 
