@@ -7,6 +7,10 @@ source "$HOME/suckless/Assest.conf"
 # Create the repository folder
 mkdir -p "$HOME/repo/"
 
+# Enable Paralleldownloads and Colors 
+sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+sed -i 's/^#Color/Color/' /etc/pacman.conf
+
 # Display the banner
 echo -e "$Banner"
 
