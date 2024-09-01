@@ -110,10 +110,10 @@ echo -e "
 "
 
 # Clone and install AUR helper paru
-cd "$HOME/repo/"
-git clone https://aur.archlinux.org/paru.git
-cd "$HOME/repo/paru"
-makepkg -si --noconfirm
+# cd "$HOME/repo/"
+# git clone https://aur.archlinux.org/paru.git
+# cd "$HOME/repo/paru"
+# makepkg -si --noconfirm
 echo -e "
 -------------------------------------------------------------------------
                        Determine web browser
