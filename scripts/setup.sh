@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e  # Exit on command failure
-sudo pacman -Syyu 
+sudo pacman -Syyu --noconfirm --needed
 # Source configuration from Assest.conf
 source "$HOME/suckless/Assest.conf"
 
