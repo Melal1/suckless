@@ -45,7 +45,7 @@ echo -e "
 "
 
 # Function to set up Git and generate an SSH key
-fn_inputs() {
+fn_ssh() {
     echo -ne "\nPlease enter a valid email: "
     read -r EMAIL
 
@@ -66,24 +66,23 @@ fn_inputs() {
             # Configure Git with the user's details
             git config --global user.name "$(whoami)"
             git config --global user.email "${EMAIL}"
-            sleep 2
+            # Start the SSH agent
+            eval "$(ssh-agent -s)"
+            sleep 1
         elif [[ $confirmation =~ ^[nN]$ ]]; then
             echo -e "\nOkay. Please enter your email again."
-            fn_inputs  # Recursively prompt for a valid email
+            fn_ssh  # Recursively prompt for a valid email
         else
             echo -e "Invalid input. Please enter 'y' for yes or 'n' for no.\n"
-            fn_inputs  # Recursively prompt for a valid response
+            fn_ssh  # Recursively prompt for a valid response
         fi
     else
         echo -ne "\nInvalid email address.\nPlease try again.\n"
-        fn_inputs  # Recursively prompt for a valid email
+        fn_ssh  # Recursively prompt for a valid email
     fi
 }
 
-fn_inputs
 
-# Start the SSH agent
-eval "$(ssh-agent -s)"
 
 echo -e "
 -------------------------------------------------------------------------
@@ -237,6 +236,9 @@ for pkg4 in "${DPN[@]}"; do
     sudo pacman -S "$pkg4" --noconfirm --needed
     sleep 1  # Short delay between installations
 done
+
+
+fn_ssh
 
 echo -e "
 -------------------------------------------------------------------------
