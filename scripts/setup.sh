@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e  # Exit on command failure
-sudo pacman -Syyu --noconfirm --needed
 # Source configuration from Assest.conf
 source "$HOME/suckless/Assest.conf"
 # Create the repository folder
@@ -10,6 +9,8 @@ mkdir -p "$HOME/repo/"
 # Enable Paralleldownloads and Colors 
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 sed -i 's/^#Color/Color/' /etc/pacman.conf
+
+sudo pacman -Syyu --noconfirm --needed
 
 # Display the banner
 echo -e "$Banner"
