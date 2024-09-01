@@ -109,11 +109,37 @@ echo -e "
 -------------------------------------------------------------------------
 "
 
+fn_aur() {
+    while true; do
+        echo -ne "Do you want to install the paru-bin version ? (Y/n): "
+        read AURn
+
+        if [[ "$AURn" =~ ^[yY]$ || -z "$AURn" ]]; then 
+            echo "Downloading paru-bin"
+            aur="paru-bin"
+            break
+        elif [[ "$AURn" =~ ^[nN]$ ]]; then 
+            aur="paru"
+            echo "Downloading paru"
+            break
+        else 
+            echo "Invalid choice, Please enter Y or n."
+        fi
+    done
+}
+
+fn_aur
+
+# Ensure repository directory exists
+repo_dir="$HOME/repo/"
+mkdir -p "$repo_dir"
+
 # Clone and install AUR helper paru
-# cd "$HOME/repo/"
-# git clone https://aur.archlinux.org/paru.git
-# cd "$HOME/repo/paru"
-# makepkg -si --noconfirm
+cd "$repo_dir"
+git clone "https://aur.archlinux.org/$aur.git"
+cd "$aur"
+makepkg -si --noconfirm
+
 echo -e "
 -------------------------------------------------------------------------
                        Determine web browser
