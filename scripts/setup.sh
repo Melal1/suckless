@@ -4,6 +4,8 @@ set -e  # Exit on command failure
 sudo pacman -Syyu --noconfirm --needed
 # Source configuration from Assest.conf
 source "$HOME/suckless/Assest.conf"
+# Create the repository folder
+mkdir -p "$HOME/repo/"
 
 # Display the banner
 echo -e "$Banner"
@@ -92,22 +94,9 @@ for pkg in "${PKG[@]}"; do
     sudo pacman -S "$pkg" --noconfirm --needed
 done
 
-echo -e "
--------------------------------------------------------------------------
-                       Installing Suckless Programs
--------------------------------------------------------------------------
-"
 
-# Install Suckless programs (with my configs)
-chmod +wr "$HOME/suckless"
-cd "$HOME/suckless/dmenu" || exit
-sudo make clean install 
 
-cd "$HOME/suckless/dwm" || exit
-sudo make clean install 
 
-# Create the repository folder
-mkdir -p "$HOME/repo/"
 
 echo -e "
 -------------------------------------------------------------------------
@@ -230,6 +219,22 @@ for pkg4 in "${DPN[@]}"; do
     sudo pacman -S "$pkg4" --noconfirm --needed
     sleep 1  # Short delay between installations
 done
+
+
+echo -e "
+-------------------------------------------------------------------------
+                       Installing Suckless Programs
+-------------------------------------------------------------------------
+"
+
+# Install Suckless programs (with my configs)
+chmod +wr "$HOME/suckless"
+cd "$HOME/suckless/dmenu" || exit
+sudo make clean install 
+
+cd "$HOME/suckless/dwm" || exit
+sudo make clean install 
+
 
 echo -e "
 -------------------------------------------------------------------------
