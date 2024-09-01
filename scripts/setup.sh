@@ -206,9 +206,11 @@ fn_add_additional_packages() {
 
     # Display updated DPN array
     echo -e "\nUpdated DPN array:"
+    sleep 1
     for pkg3 in "${DPN[@]}"; do
         echo "$pkg3"
     done
+    sleep 3
 }
 
 fn_add_additional_packages
