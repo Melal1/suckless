@@ -38,12 +38,6 @@ echo -e "Removing 2-Setup script..."
 
 
 
-echo -e "
--------------------------------------------------------------------------
-                       Setting Up Git and Generating SSH Key
--------------------------------------------------------------------------
-"
-
 # Function to set up Git and generate an SSH key
 fn_ssh() {
     echo -ne "\nPlease enter a valid email: "
@@ -237,6 +231,11 @@ for pkg4 in "${DPN[@]}"; do
     sleep 1  # Short delay between installations
 done
 
+echo -e "
+-------------------------------------------------------------------------
+                       Setting Up Git and Generating SSH Key
+-------------------------------------------------------------------------
+"
 
 fn_ssh
 
