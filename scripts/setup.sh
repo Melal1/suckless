@@ -7,8 +7,8 @@ source "$HOME/suckless/Assest.conf"
 mkdir -p "$HOME/repo/"
 
 # Enable Paralleldownloads and Colors 
-sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-sed -i 's/^#Color/Color/' /etc/pacman.conf
+sudo sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+sudo sed -i 's/^#Color/Color/' /etc/pacman.conf
 
 sudo pacman -Syyu --noconfirm --needed
 
