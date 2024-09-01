@@ -155,8 +155,7 @@ echo -e "
 # Function to check if a package exists in the repositories
 package_exists() {
     local package="$1"
-    sudo pacman -Fy &>/dev/null  # Update file database
-    if pacman -Fq "$package" &>/dev/null; then
+    if pacman -Sp "$package" &>/dev/null; then
         return 0  # Package exists
     else
         return 1  # Package does not exist
