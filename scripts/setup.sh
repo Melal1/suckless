@@ -162,11 +162,14 @@ Enter the number of your choice (1/2/3): "
     read -r BROWSER_CHOICE
 
     if [[ "$BROWSER_CHOICE" == "1" ]]; then
+        PerBrowser="firefox"   
         DPN+=("firefox")
     elif [[ "$BROWSER_CHOICE" == "2" ]]; then
         paru -S zen-browser-bin --noconfirm --needed
+        PerBrowser="zen-browser"   
     elif [[ "$BROWSER_CHOICE" == "3" ]]; then
-       DPN+=("chromium")
+        DPN+=("chromium")
+        PerBrowser="chromium"   
     elif [[ "$BROWSER_CHOICE" == "4" ]]; then 
         echo -e "Skipping ... \n"
     else
@@ -308,9 +311,49 @@ cd /etc/pam.d/
 sudo patch -i $HOME/repo/assests/diff/pam.diff
 if [[ $? -ne 0 ]]; then
     echo "Error applying PAM patch."
+    sleep 3
     exit 1
 fi
 cd $HOME
+
+
+if [[ "$BROWSER_CHOICE" == "4" ]]; then 
+
+    echo -e "
+    -------------------------------------------------------------------------
+                           Installing clipmenu 
+                           You skipped browser section so don't forget to export 
+                           your preferred browser to make sure clipmenu-url works !!
+    -------------------------------------------------------------------------
+    "
+    sleep 2
+    else
+    echo -e "
+    -------------------------------------------------------------------------
+                           Installing clipmenu 
+    -------------------------------------------------------------------------
+    "   
+fi
+
+
+sudo cat << 'CLEND' > "/usr/bin/clipmenu-url"
+#!/usr/bin/env bash
+
+files=($XDG_RUNTIME_DIR/clipmenu.6.$USER/*)
+
+newest=${files[0]}
+for f in "${files[@]}"; do
+	if [[ $f -nt $newest ]]; then
+		newest=$f
+	fi
+done
+if url=$(grep --max-count=1 --only-matching --perl-regexp "http(s?):\/\/[^ \"\(\)\<\>\]]*" "$newest"); then
+	xdg-open $url
+fi
+
+CLEND
+
+sudo chmod +x /usr/bin/clipmenu-url
 
 echo -e "
 -------------------------------------------------------------------------
@@ -421,11 +464,15 @@ echo -e "
 
 # Install .xinitrc for starting dwm and other programs
 rm -rf "$HOME/.xinitrc"
-cat << 'REALEND' > "$HOME/.xinitrc"
-export PATH="$HOME/.local/bin:$PATH" &
-feh --bg-scale "$HOME/Pictures/Wallpapers/1.jpg" &
+
+cat << EOF > "$HOME/.xinitrc"
+export PATH="\$HOME/.local/bin:\$PATH" &
+clipmenud &
+feh --bg-scale "\$HOME/Pictures/Wallpapers/1.jpg" &
+BROWSER=$PerBrowser
 exec dwm
-REALEND
+EOF
+
 
 # Function to clean up installed dependency repositories
 cleanup_fn() {

@@ -12,7 +12,7 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "Hack Nerd Font:style=Bold:size=10" };
-static const char dmenufont[]       = "monospace:size=10";
+static const char dmenufont[]       = "Hack Nerd Font:style=Bold:size=10";
 static const char col1[]       = "#FFFFFF";
 static const char col2[]       = "#000000";
 static const char col3[]       = "#eeeeee";
@@ -103,6 +103,9 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col2, "-nf", col1, "-sb", col1, "-sf", col2, NULL };
 static const char *termcmd[]  = { "", NULL };
 static const char *browser[] = {"zen-browser", NULL} ;
+static const char *clipmenu[] = {"clipmenu", "-i", "-fn", dmenufont, NULL} ;
+static const char *clipurl[] = {"clipmenu-url", NULL} ;
+
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 
@@ -110,7 +113,9 @@ static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_f, spawn,          {.v = browser } },
+	{ Mod4Mask|ShiftMask,           XK_f,	   spawn,          {.v = browser } },
+	{ MODKEY|ShiftMask,             XK_v,      spawn,          {.v = clipmenu } },
+	{ MODKEY|Mod4Mask|ShiftMask,    XK_v,      spawn,          {.v = clipurl } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_a,  togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
