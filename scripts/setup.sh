@@ -260,7 +260,7 @@ for pkg4 in "${DPN[@]}"; do
     echo "Installing $pkg4..."
     echo "--------------------------------------"
     sudo pacman -S "$pkg4" --noconfirm --needed
-    sleep 1  # Short delay between installations
+    
 done
 
 
