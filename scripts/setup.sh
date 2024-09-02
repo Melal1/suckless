@@ -12,7 +12,6 @@ sudo sed -i 's/^#Color/Color/' /etc/pacman.conf
 
 sudo pacman -Syyu --noconfirm --needed
 
-# Display the banner
 echo -e "$Banner"
 
 # Function to determine what type of terminal to download
@@ -20,9 +19,9 @@ fn_vr() {
     echo -ne "\nAre you on a virtual machine? (y/N): "
     read -r VIR
 
-    # Check user input and adjust terminal settings accordingly
+    
     if [[ "$VIR" =~ ^[yY]$ ]]; then
-        # Modify dwm config to use rxvt-unicode if on a VM
+        # Modify dwm config to use rxvt-unicode if on a VM (don't use gpu ac)
         sed -i 's/static const char \*termcmd\[\]  = { "", NULL };/static const char \*termcmd\[\]  = { "urxvt", NULL };/' "$HOME/suckless/dwm/config.def.h"
         DPN+=("rxvt-unicode")
     elif [[ "$VIR" =~ ^[nN]$ || -z "$VIR" ]]; then
@@ -31,7 +30,7 @@ fn_vr() {
         DPN+=("kitty")
     else
         echo -e "Invalid input. Please enter 'y' for yes or 'n' for no.\n"
-        fn_vr  # Recursively prompt for valid input
+        fn_vr 
     fi
 }
 
@@ -192,59 +191,63 @@ package_exists() {
 fn_add_additional_packages() {
     local packages=()
     local all_valid=true
+    local package_check=false  
 
     while true; do
         echo -ne "Enter the names of additional packages to add (space-separated): "
         read -r -a input_packages  # Read space-separated package names into an array
 
         if [ ${#input_packages[@]} -eq 0 ]; then
-            echo "No packages entered. Exiting."
-            exit 1
+            echo "No packages entered. Skipping validation and package addition."
+            break  
         fi
 
-        all_valid=true  # Reset validity flag
+        package_check=true  
+        all_valid=true  # reset
 
         # Check each package
         for pkg in "${input_packages[@]}"; do
             echo "Checking if '$pkg' exists in the repositories..."
             if package_exists "$pkg"; then
                 echo "Package '$pkg' found."
-                packages+=("$pkg")  # Add valid package to the list
+                packages+=("$pkg")  
             else
                 echo "Package '$pkg' does not exist in the repositories."
                 sleep 1
-                all_valid=false  # Set flag to false if any package is invalid
+                all_valid=false  
             fi
         done
 
         if $all_valid; then
-            break  # Exit loop if all packages are valid
+            break  
         else
             echo "Please enter only valid package names."
         fi
     done
 
-    echo -e "\nAdding valid packages to the DPN array...\n"
+    if $package_check; then
+        echo -e "\nAdding valid packages to the DPN array...\n"
 
-    # Add valid packages to the existing DPN array
-    for pkg2 in "${packages[@]}"; do
-        if [[ ! " ${DPN[@]} " =~ " ${pkg2} " ]]; then
-            DPN+=("$pkg2")
-            echo "Added '$pkg2' to the DPN array."
-        else
-            echo "'$pkg2' is already in the DPN array."
-        fi
-    done
+        for pkg2 in "${packages[@]}"; do
+            if [[ ! " ${DPN[@]} " =~ " ${pkg2} " ]]; then
+                DPN+=("$pkg2")
+                echo "Added '$pkg2' to the download list."
+            else
+                echo "'$pkg2' is already in the download list."
+            fi
+        done
 
-    # Display updated DPN array
-    echo -e "\nUpdated DPN array:"
-    for pkg3 in "${DPN[@]}"; do
-        echo "$pkg3"
-    done
-    sleep 2
+        # Display updated DPN array
+        echo -e "\nUpdated download list:"
+        for pkg3 in "${DPN[@]}"; do
+            echo "$pkg3"
+        done
+        sleep 2
+    fi
 }
 
 fn_add_additional_packages
+
 
 
 
