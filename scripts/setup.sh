@@ -125,12 +125,10 @@ fn_aur() {
 
 fn_aur
 
-# Ensure repository directory exists
-repo_dir="$HOME/repo/"
-mkdir -p "$repo_dir"
+
 
 # Clone and install AUR helper paru
-cd "$repo_dir" || { echo "Failed to change directory to $repo_dir"; exit 1; }
+cd "$HOME/repo/" || { echo "Failed to change directory to $HOME/repo/"; exit 1; }
 git clone "https://aur.archlinux.org/$aur.git"
 if [[ $? -ne 0 ]]; then
     echo "Error cloning AUR repository."
@@ -154,23 +152,22 @@ echo -e "
 fn_browser() {
     echo -ne "
 Please choose your preferred web browser:
-1. Firefox
-2. Zen Browser (AUR)
-3. Chromium
-4. Skip 
+1. Zen Browser (AUR)
+2. Chromium
+3. Skip 
 Enter the number of your choice (1/2/3): "
     read -r BROWSER_CHOICE
 
+    # if [[ "$BROWSER_CHOICE" == "1" ]]; then
+    #     PerBrowser="firefox"   
+    #     DPN+=("firefox")
     if [[ "$BROWSER_CHOICE" == "1" ]]; then
-        PerBrowser="firefox"   
-        DPN+=("firefox")
-    elif [[ "$BROWSER_CHOICE" == "2" ]]; then
         paru -S zen-browser-bin --noconfirm --needed
         PerBrowser="zen-browser"   
-    elif [[ "$BROWSER_CHOICE" == "3" ]]; then
+    elif [[ "$BROWSER_CHOICE" == "2" ]]; then
         DPN+=("chromium")
         PerBrowser="chromium"   
-    elif [[ "$BROWSER_CHOICE" == "4" ]]; then 
+    elif [[ "$BROWSER_CHOICE" == "3" ]]; then 
         echo -e "Skipping ... \n"
     else
         echo -e "Invalid option. Please choose '1', '2', or '3'.\n"
@@ -336,7 +333,7 @@ if [[ "$BROWSER_CHOICE" == "4" ]]; then
 fi
 
 
-sudo cat << 'CLEND' > "/usr/bin/clipmenu-url"
+sudo cat << 'CLEND' > "$HOME/clipmenu-url"
 #!/usr/bin/env bash
 
 files=($XDG_RUNTIME_DIR/clipmenu.6.$USER/*)
@@ -352,7 +349,7 @@ if url=$(grep --max-count=1 --only-matching --perl-regexp "http(s?):\/\/[^ \"\(\
 fi
 
 CLEND
-
+sudo mv $HOME/clipmenu-url /usr/bin/
 sudo chmod +x /usr/bin/clipmenu-url
 
 echo -e "
@@ -479,7 +476,6 @@ echo -e "
 -------------------------------------------------------------------------
 "
 
-rm $HOME/.config/user-dirs-dirs
 cat << 'xDirs' > "$HOME/.config/user-dirs.dirs"
 XDG_DOWNLOAD_DIR="$HOME/Downloads"
 XDG_REPO_DIR="$HOME/repo"
