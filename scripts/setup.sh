@@ -95,8 +95,26 @@ PKG=("xorg" "xorg-xinit")
 
 for pkg in "${PKG[@]}"; do
     echo "Installing $pkg..."
-    sudo pacman -S "$pkg" --noconfirm --needed
+    sudo pacman -S "$pkg" --noconfirm --needed || true
 done
+
+
+echo -e "
+-------------------------------------------------------------------------
+                       Adding Keyboard Layouts 
+            ^Default layouts (ar, en). Edit /etc/X11/xorg.conf.d/00-keyboard.conf later
+            ^Default key to change layout is win + space
+-------------------------------------------------------------------------
+"
+
+# Set keyboard layouts and layout switch key combination
+localectl set-x11-keymap us,ara ,pc101 qwerty grp:win_space_toggle
+if [[ $? -ne 0 ]]; then
+    echo "Error setting keyboard layouts."
+    exit 1
+fi
+
+
 
 echo -e "
 -------------------------------------------------------------------------
@@ -259,7 +277,7 @@ for pkg4 in "${DPN[@]}"; do
     echo -ne"--------------------------------------"
     echo "Installing $pkg4..."
     echo "--------------------------------------"
-    sudo pacman -S "$pkg4" --noconfirm --needed
+    sudo pacman -S "$pkg4" --noconfirm --needed || true
 done
 
 # Clone assets repository
@@ -314,7 +332,7 @@ fi
 cd $HOME
 
 
-if [[ "$BROWSER_CHOICE" == "4" ]]; then 
+if [[ "$BROWSER_CHOICE" == "3" ]]; then 
 
     echo -e "
 -------------------------------------------------------------------------
@@ -369,7 +387,7 @@ fn_dpen() {
                        Installing Audio Server
 -------------------------------------------------------------------------
 "
-        sudo pacman -S "${pipewire[@]}" --noconfirm --needed
+        sudo pacman -Syu "${pipewire[@]}" --noconfirm --needed || true
         if [[ $? -ne 0 ]]; then
             echo "Error installing Pipewire."
             exit 1
@@ -391,11 +409,7 @@ echo -e "
 "
 
 #  install fonts
-git clone https://github.com/Melal1/assests.git "$HOME/repo/assests"
-if [[ $? -ne 0 ]]; then
-    echo "Error cloning assets repository for fonts."
-    exit 1
-fi
+
 sudo cp -r "$HOME/repo/assests/font-assests/fonts/"* /usr/share/fonts/
 if [[ $? -ne 0 ]]; then
     echo "Error copying fonts."
@@ -424,6 +438,14 @@ fi
 
 echo -e "
 -------------------------------------------------------------------------
+                       Setup Xresources
+            ^Note: You can edit ~/.Xresources later
+-------------------------------------------------------------------------
+"
+cp "$HOME/repo/assests/resources/.Xresources" "$HOME/.Xresources"
+
+echo -e "
+-------------------------------------------------------------------------
                        Copying Wallpapers
             ^Note: Wallpapers are located in ~/Pictures/Wallpapers
 -------------------------------------------------------------------------
@@ -437,20 +459,6 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-echo -e "
--------------------------------------------------------------------------
-                       Adding Keyboard Layouts 
-            ^Default layouts (ar, en). Edit /etc/X11/xorg.conf.d/00-keyboard.conf later
-            ^Default key to change layout is win + space
--------------------------------------------------------------------------
-"
-
-# Set keyboard layouts and layout switch key combination
-localectl set-x11-keymap us,ara ,pc101 qwerty grp:win_space_toggle
-if [[ $? -ne 0 ]]; then
-    echo "Error setting keyboard layouts."
-    exit 1
-fi
 
 echo -e "
 -------------------------------------------------------------------------
@@ -464,27 +472,19 @@ rm -rf "$HOME/.xinitrc"
 
 cat << EOF > "$HOME/.xinitrc"
 export PATH="\$HOME/.local/bin:\$PATH" &
+export BROWSER=$PerBrowser
+[[ -f ~/.Xresources ]] && xrdb -merge -I\$HOME ~/.Xresources
+feh --bg-fill "\$HOME/Pictures/Wallpapers/1.jpg" &
+xrandr --dpi 130 &
+
+picom &
 clipmenud &
-feh --bg-scale "\$HOME/Pictures/Wallpapers/1.jpg" &
-BROWSER=$PerBrowser
+
 exec dwm
 EOF
 
-echo -e "
--------------------------------------------------------------------------
-                       Editing XDG user directories 
--------------------------------------------------------------------------
-"
-xdg-user-dirs-update
-rm $HOME/.config/user-dirs.dirs
-cat << 'xDirs' > "$HOME/.config/user-dirs.dirs"
-XDG_DOWNLOAD_DIR="$HOME/Downloads"
-XDG_REPO_DIR="$HOME/repo"
-XDG_DOCUMENTS_DIR="$HOME/Documents"
-XDG_AUDIO_DIR="$HOME/Audio"
-XDG_PICTURES_DIR="$HOME/Pictures"
-XDG_VIDEOS_DIR="$HOME/Videos"
-xDirs
+
+
 
 
 # Function to clean up installed dependency repositories
@@ -508,6 +508,8 @@ cleanup_fn() {
 }
 
 cleanup_fn
+
+chmod +x $HOME/suckless/scripts/optional.sh
 
 echo -e "
 -------------------------------------------------------------------------

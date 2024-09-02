@@ -15,16 +15,6 @@ static char font[]          = { "Hack Nerd Font:style=Bold:size=10" };
 static char dmenufont[]       = "Hack Nerd Font:style=Bold:size=10";
 static const char *fonts[]          = { font };
 
-// static const char col1[]       = "#FFFFFF";
-// static const char col2[]       = "#000000";
-// static const char col3[]       = "#eeeeee";
-// static const char col4[]        = "#000000";
-// static const char col5[]        = "#FFFFFF";
-// static const char col6[]        = "#000000";
-// static const char col7[]        = "#FFFFFF";
-// static const char col8[]        = "#080808";
-
-
 
 // static const char *colors[][3]      = {
 // 	/*               fg         bg         border   */
@@ -42,11 +32,14 @@ static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
 static char selbordercolor[]        = "#005577";
 static char selbgcolor[]            = "#005577";
+static char titleschemefg[]            = "#FF0000";
+static char titleschemebg[]            = "#6F7700";
+static char titleschemebd[]            = "#770000";
 static char *colors[][3] = {
        /*               fg           bg           border   */
        [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
        [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
-	   [SchemeTitle]  = { selfgcolor, selbgcolor,  selbordercolor },
+	   [SchemeTitle]  = { titleschemefg, titleschemebg,  titleschemebd },
  };
 
 #define TCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -121,12 +114,15 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 ResourcePref resources[] = {
 		{ "font",               STRING,  &font },
 		{ "dmenufont",          STRING,  &dmenufont },
-		{ "color0",        STRING,  &normbgcolor },
-		{ "color1",    STRING,  &normbordercolor },
-		{ "color2",        STRING,  &normfgcolor },
-		{ "color3",         STRING,  &selbgcolor },
-		{ "color4",     STRING,  &selbordercolor },
-		{ "color5",         STRING,  &selfgcolor },
+		{ "color2",       		STRING,  &normbgcolor },
+		{ "color2",    			STRING,  &normbordercolor },
+		{ "color1",        		STRING,  &normfgcolor },
+		{ "color1",         	STRING,  &selbgcolor },
+		{ "color1",     		STRING,  &selbordercolor },
+		{ "color2",         	STRING,  &selfgcolor },
+		{ "color3",         	STRING,  &titleschemefg },
+		{ "color1",         	STRING,  &titleschemebg },
+		{ "color3",         	STRING,  &titleschemebd },
 		{ "borderpx",          	INTEGER, &borderpx },
 		{ "snap",          		INTEGER, &snap },
 		{ "showbar",          	INTEGER, &showbar },
@@ -139,7 +135,7 @@ ResourcePref resources[] = {
 
 static const char *termcmd[]  = { "kitty", NULL };
 static const char *browser[] = {"zen-browser", NULL} ;
-static const char *clipmenu[] = {"clipmenu", "-i", "-fn", dmenufont, NULL} ;
+static const char *clipmenu[] = {"clipmenu", "-i", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL} ;
 static const char *clipurl[] = {"clipmenu-url", NULL} ;
 
 static const char scratchpadname[] = "scratchpad";
@@ -149,7 +145,7 @@ static const char *scratchpadcmd[] = { "kitty", "-t", scratchpadname, "-g", "120
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ Mod4Mask|ShiftMask,           XK_f,	   spawn,          {.v = browser } },
+	{ MODKEY|ShiftMask,             XK_f,	   spawn,          {.v = browser } },
 	{ MODKEY|ShiftMask,             XK_v,      spawn,          {.v = clipmenu } },
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_v,      spawn,          {.v = clipurl } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
