@@ -13,25 +13,39 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "Hack Nerd Font:style=Bold:size=10" };
 static const char dmenufont[]       = "Hack Nerd Font:style=Bold:size=10";
-static const char col1[]       = "#FFFFFF";
-static const char col2[]       = "#000000";
-static const char col3[]       = "#eeeeee";
-static const char col4[]        = "#000000";
-static const char col5[]        = "#FFFFFF";
-static const char col6[]        = "#000000";
-static const char col7[]        = "#FFFFFF";
-static const char col8[]        = "#080808";
+// static const char col1[]       = "#FFFFFF";
+// static const char col2[]       = "#000000";
+// static const char col3[]       = "#eeeeee";
+// static const char col4[]        = "#000000";
+// static const char col5[]        = "#FFFFFF";
+// static const char col6[]        = "#000000";
+// static const char col7[]        = "#FFFFFF";
+// static const char col8[]        = "#080808";
 
 
 
-static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col1, col2, col2 },
-	[SchemeSel]  = { col3, col4,  col5  },
-	[SchemeTitle]  = { col6, col7,  col8 },
-	// [SchemeTag1]  = { col_cyan6, col_cyan5, col8},
+// static const char *colors[][3]      = {
+// 	/*               fg         bg         border   */
+// 	[SchemeNorm] = { col1, col2, col2 },
+// 	[SchemeSel]  = { col3, col4,  col5  },
+// 	[SchemeTitle]  = { col6, col7,  col8 },
+// 	// [SchemeTag1]  = { col_cyan6, col_cyan5, col8},
 
-};
+// };
+
+
+static char normbgcolor[]           = "#222222";
+static char normbordercolor[]       = "#444444";
+static char normfgcolor[]           = "#bbbbbb";
+static char selfgcolor[]            = "#eeeeee";
+static char selbordercolor[]        = "#005577";
+static char selbgcolor[]            = "#005577";
+static char *colors[][3] = {
+       /*               fg           bg           border   */
+       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
+       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+	   [SchemeTitle]  = { selfgcolor, selbgcolor,  selbordercolor },
+ };
 
 #define TCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
@@ -100,7 +114,27 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col2, "-nf", col1, "-sb", col1, "-sf", col2, NULL };
++static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
+
+ResourcePref resources[] = {
+		{ "font",               STRING,  &font },
+		{ "dmenufont",          STRING,  &dmenufont },
+		{ "color0",        STRING,  &normbgcolor },
+		{ "color1",    STRING,  &normbordercolor },
+		{ "color2",        STRING,  &normfgcolor },
+		{ "color3",         STRING,  &selbgcolor },
+		{ "color4",     STRING,  &selbordercolor },
+		{ "color5",         STRING,  &selfgcolor },
+		{ "borderpx",          	INTEGER, &borderpx },
+		{ "snap",          		INTEGER, &snap },
+		{ "showbar",          	INTEGER, &showbar },
+		{ "topbar",          	INTEGER, &topbar },
+		{ "nmaster",          	INTEGER, &nmaster },
+		{ "resizehints",       	INTEGER, &resizehints },
+		{ "mfact",      	 	FLOAT,   &mfact },
+};
+
+
 static const char *termcmd[]  = { "st", NULL };
 static const char *browser[] = {"zen-browser", NULL} ;
 static const char *clipmenu[] = {"clipmenu", "-i", "-fn", dmenufont, NULL} ;
