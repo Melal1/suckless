@@ -473,6 +473,22 @@ BROWSER=$PerBrowser
 exec dwm
 EOF
 
+echo -e "
+-------------------------------------------------------------------------
+                       Editing XDG user directories 
+-------------------------------------------------------------------------
+"
+
+rm $HOME/.config/user-dirs-dirs
+cat << 'xDirs' > "$HOME/.config/user-dirs.dirs"
+XDG_DOWNLOAD_DIR="$HOME/Downloads"
+XDG_REPO_DIR="$HOME/repo"
+XDG_DOCUMENTS_DIR="$HOME/Documents"
+XDG_AUDIO_DIR="$HOME/Audio"
+XDG_PICTURES_DIR="$HOME/Pictures"
+XDG_VIDEOS_DIR="$HOME/Videos"
+xDirs
+
 
 # Function to clean up installed dependency repositories
 cleanup_fn() {
