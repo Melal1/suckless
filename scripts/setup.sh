@@ -149,9 +149,9 @@ fn_browser() {
     echo -ne "
 Please choose your preferred web browser:
 1. Firefox
-2. Zen Browser
+2. Zen Browser (AUR)
 3. Chromium
-
+4. Skip 
 Enter the number of your choice (1/2/3): "
     read -r BROWSER_CHOICE
 
@@ -161,6 +161,8 @@ Enter the number of your choice (1/2/3): "
         paru -S zen-browser-bin --noconfirm --needed
     elif [[ "$BROWSER_CHOICE" == "3" ]]; then
        DPN+=("chromium")
+    elif [[ "$BROWSER_CHOICE" == "4" ]]; then 
+        echo -e "Skipping ... \n"
     else
         echo -e "Invalid option. Please choose '1', '2', or '3'.\n"
         fn_browser  
