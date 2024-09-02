@@ -317,18 +317,18 @@ cd $HOME
 if [[ "$BROWSER_CHOICE" == "4" ]]; then 
 
     echo -e "
-    -------------------------------------------------------------------------
-                           Installing clipmenu 
-                           You skipped browser section so don't forget to export 
-                           your preferred browser to make sure clipmenu-url works !!
-    -------------------------------------------------------------------------
+-------------------------------------------------------------------------
+                       Installing clipmenu 
+                       You skipped browser section so don't forget to export 
+                       your preferred browser to make sure clipmenu-url works !!
+-------------------------------------------------------------------------
     "
     sleep 2
     else
     echo -e "
-    -------------------------------------------------------------------------
-                           Installing clipmenu 
-    -------------------------------------------------------------------------
+-------------------------------------------------------------------------
+                        Installing clipmenu 
+-------------------------------------------------------------------------
     "   
 fi
 
@@ -475,7 +475,8 @@ echo -e "
                        Editing XDG user directories 
 -------------------------------------------------------------------------
 "
-
+xdg-user-dirs-update
+rm $HOME/.config/user-dirs.dirs
 cat << 'xDirs' > "$HOME/.config/user-dirs.dirs"
 XDG_DOWNLOAD_DIR="$HOME/Downloads"
 XDG_REPO_DIR="$HOME/repo"
