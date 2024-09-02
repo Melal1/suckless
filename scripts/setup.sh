@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e  # Exit on command failure
+
 # Source configuration from Assest.conf
 source "$HOME/suckless/Assest.conf"
 # Create the repository folder
@@ -10,6 +11,7 @@ mkdir -p "$HOME/repo/"
 sudo sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 sudo sed -i 's/^#Color/Color/' /etc/pacman.conf
 
+# Update system packages
 sudo pacman -Syyu --noconfirm --needed
 
 echo -e "$Banner"
@@ -19,7 +21,6 @@ fn_vr() {
     echo -ne "\nAre you on a virtual machine? (y/N): "
     read -r VIR
 
-    
     if [[ "$VIR" =~ ^[yY]$ ]]; then
         # Modify dwm config to use rxvt-unicode if on a VM (don't use gpu ac)
         sed -i 's/static const char \*termcmd\[\]  = { "", NULL };/static const char \*termcmd\[\]  = { "urxvt", NULL };/' "$HOME/suckless/dwm/config.def.h"
@@ -36,13 +37,10 @@ fn_vr() {
 
 fn_vr
 
-
 sleep 1
 
 # Alert about removing the setup script from archinstall script
 echo -e "Removing 2-Setup script..."
-
-
 
 # Function to set up Git and generate an SSH key
 fn_ssh() {
@@ -62,6 +60,10 @@ fn_ssh() {
             echo -e "\nEmail confirmed: ${EMAIL}"
             # Generate SSH key
             ssh-keygen -t ed25519 -f "${ssh_PATH}/id_ed25519" -C "${EMAIL}" -q -N ""
+            if [[ $? -ne 0 ]]; then
+                echo "Error generating SSH key."
+                exit 1
+            fi
             echo -e "\nSSH key generated. Please copy it from ~/.ssh/ and add it to GitHub."
             # Configure Git with the user's details
             git config --global user.name "$(whoami)"
@@ -82,8 +84,6 @@ fn_ssh() {
     fi
 }
 
-
-
 echo -e "
 -------------------------------------------------------------------------
                        Installing Display Server
@@ -98,10 +98,6 @@ for pkg in "${PKG[@]}"; do
     sudo pacman -S "$pkg" --noconfirm --needed
 done
 
-
-
-
-
 echo -e "
 -------------------------------------------------------------------------
                        Installing AUR Helper
@@ -110,7 +106,7 @@ echo -e "
 
 fn_aur() {
     while true; do
-        echo -ne "Do you want to install the paru-bin version ? (Y/n): "
+        echo -ne "Do you want to install the paru-bin version? (Y/n): "
         read AURn
 
         if [[ "$AURn" =~ ^[yY]$ || -z "$AURn" ]]; then 
@@ -134,16 +130,26 @@ repo_dir="$HOME/repo/"
 mkdir -p "$repo_dir"
 
 # Clone and install AUR helper paru
-cd "$repo_dir"
+cd "$repo_dir" || { echo "Failed to change directory to $repo_dir"; exit 1; }
 git clone "https://aur.archlinux.org/$aur.git"
-cd "$aur"
+if [[ $? -ne 0 ]]; then
+    echo "Error cloning AUR repository."
+    exit 1
+fi
+
+cd "$aur" || { echo "Failed to change directory to $aur"; exit 1; }
 makepkg -si --noconfirm
+if [[ $? -ne 0 ]]; then
+    echo "Error installing AUR package."
+    exit 1
+fi
 
 echo -e "
 -------------------------------------------------------------------------
                        Determine web browser
 -------------------------------------------------------------------------
 "
+
 # Function to select the preferred web browser
 fn_browser() {
     echo -ne "
@@ -170,8 +176,6 @@ Enter the number of your choice (1/2/3): "
 }
 
 fn_browser
-
-
 
 echo -e "
 -------------------------------------------------------------------------
@@ -250,19 +254,20 @@ fn_add_additional_packages() {
 
 fn_add_additional_packages
 
-
-
-
 # Install additional packages defined in the DPN array
 for pkg4 in "${DPN[@]}"; do
-
     echo -ne"--------------------------------------"
     echo "Installing $pkg4..."
     echo "--------------------------------------"
     sudo pacman -S "$pkg4" --noconfirm --needed
-    
 done
 
+# Clone assets repository
+git clone https://github.com/Melal1/assests.git "$HOME/repo/assests"
+if [[ $? -ne 0 ]]; then
+    echo "Error cloning assets repository."
+    exit 1
+fi
 
 echo -e "
 -------------------------------------------------------------------------
@@ -272,20 +277,40 @@ echo -e "
 
 # Install Suckless programs (with my configs)
 chmod +wr "$HOME/suckless"
-cd "$HOME/suckless/dmenu" || exit
+cd "$HOME/suckless/dmenu" || { echo "Failed to change directory to $HOME/suckless/dmenu"; exit 1; }
 sudo make clean install 
+if [[ $? -ne 0 ]]; then
+    echo "Error installing dmenu."
+    exit 1
+fi
 
-cd "$HOME/suckless/dwm" || exit
+cd "$HOME/suckless/dwm" || { echo "Failed to change directory to $HOME/suckless/dwm"; exit 1; }
 sudo make clean install 
-
+if [[ $? -ne 0 ]]; then
+    echo "Error installing dwm."
+    exit 1
+fi
 
 echo -e "
 -------------------------------------------------------------------------
                        Setting Up Git and Generating SSH Key
 -------------------------------------------------------------------------
 "
-
 fn_ssh
+
+echo -e "
+-------------------------------------------------------------------------
+                       Installing Gnome-Keyring
+-------------------------------------------------------------------------
+"
+
+cd /etc/pam.d/
+sudo patch -i $HOME/repo/assests/diff/pam.diff
+if [[ $? -ne 0 ]]; then
+    echo "Error applying PAM patch."
+    exit 1
+fi
+cd $HOME
 
 echo -e "
 -------------------------------------------------------------------------
@@ -305,6 +330,10 @@ fn_dpen() {
 -------------------------------------------------------------------------
 "
         sudo pacman -S "${pipewire[@]}" --noconfirm --needed
+        if [[ $? -ne 0 ]]; then
+            echo "Error installing Pipewire."
+            exit 1
+        fi
     elif [[ "$An" =~ ^[nN]$ ]]; then
         echo "Okay, skipping..."
     else
@@ -321,9 +350,17 @@ echo -e "
 -------------------------------------------------------------------------
 "
 
-# Clone and install fonts
+#  install fonts
 git clone https://github.com/Melal1/assests.git "$HOME/repo/assests"
+if [[ $? -ne 0 ]]; then
+    echo "Error cloning assets repository for fonts."
+    exit 1
+fi
 sudo cp -r "$HOME/repo/assests/font-assests/fonts/"* /usr/share/fonts/
+if [[ $? -ne 0 ]]; then
+    echo "Error copying fonts."
+    exit 1
+fi
 
 echo -e "
 -------------------------------------------------------------------------
@@ -335,7 +372,15 @@ echo -e "
 # Apply font configuration
 mkdir -p "$HOME/.config/fontconfig/"
 cp "$HOME/repo/assests/font-assests/fonts.conf" "$HOME/.config/fontconfig/"
+if [[ $? -ne 0 ]]; then
+    echo "Error copying fontconfig file."
+    exit 1
+fi
 fc-cache -fv
+if [[ $? -ne 0 ]]; then
+    echo "Error applying fontconfig file."
+    exit 1
+fi
 
 echo -e "
 -------------------------------------------------------------------------
@@ -345,9 +390,12 @@ echo -e "
 "
 
 # Copy wallpapers to the Pictures directory
-
 mkdir -p "$HOME/Pictures/Wallpapers"
 cp "$HOME/repo/assests/wallpapers/"* "$HOME/Pictures/Wallpapers"
+if [[ $? -ne 0 ]]; then
+    echo "Error copying wallpapers."
+    exit 1
+fi
 
 echo -e "
 -------------------------------------------------------------------------
@@ -359,6 +407,10 @@ echo -e "
 
 # Set keyboard layouts and layout switch key combination
 localectl set-x11-keymap us,ara ,pc101 qwerty grp:win_space_toggle
+if [[ $? -ne 0 ]]; then
+    echo "Error setting keyboard layouts."
+    exit 1
+fi
 
 echo -e "
 -------------------------------------------------------------------------
@@ -391,7 +443,7 @@ cleanup_fn() {
         echo -e "Okay...\nNote that all repository dependencies are stored in '$HOME/repo'."
     else
         echo -e "Invalid option. Please choose 'y' or 'n'."
-        cleanup_fn  # Recursively prompt for valid input
+        cleanup_fn  
     fi
 }
 
