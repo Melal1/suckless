@@ -471,7 +471,6 @@ echo -e "
 rm -rf "$HOME/.xinitrc"
 
 cat << EOF > "$HOME/.xinitrc"
-export PATH="\$HOME/.local/bin:\$PATH" &
 export BROWSER=$PerBrowser
 [[ -f ~/.Xresources ]] && xrdb -merge -I\$HOME ~/.Xresources
 feh --bg-fill "\$HOME/Pictures/Wallpapers/1.jpg" &
