@@ -64,7 +64,8 @@ static const Rule rules[] = {
 	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
 	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
 	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
-	{ "St",      NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ "kitty",   NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ NULL,   "mpv",     NULL,          	   0,         0,          0,           0,        -1 },
 	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
@@ -116,12 +117,12 @@ ResourcePref resources[] = {
 		{ "dmenufont",          STRING,  &dmenufont },
 		{ "color2",       		STRING,  &normbgcolor },
 		{ "color2",    			STRING,  &normbordercolor },
-		{ "color1",        		STRING,  &normfgcolor },
-		{ "color1",         	STRING,  &selbgcolor },
-		{ "color1",     		STRING,  &selbordercolor },
+		{ "col1",        		STRING,  &normfgcolor },
+		{ "col1",         	STRING,  &selbgcolor },
+		{ "col1",     		STRING,  &selbordercolor },
 		{ "color2",         	STRING,  &selfgcolor },
 		{ "color3",         	STRING,  &titleschemefg },
-		{ "color1",         	STRING,  &titleschemebg },
+		{ "col1",         	STRING,  &titleschemebg },
 		{ "color3",         	STRING,  &titleschemebd },
 		{ "borderpx",          	INTEGER, &borderpx },
 		{ "snap",          		INTEGER, &snap },
@@ -137,7 +138,7 @@ static const char *termcmd[]  = { "kitty", NULL };
 static const char *browser[] = {"zen-browser", NULL} ;
 static const char *clipmenu[] = {"clipmenu", "-i", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL} ;
 static const char *clipurl[] = {"clipmenu-url", NULL} ;
-
+static const char *reload[] = { "reloadtheme.sh", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "kitty", "-t", scratchpadname, "-g", "120x34", NULL };
 
@@ -149,6 +150,7 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_v,      spawn,          {.v = clipmenu } },
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_v,      spawn,          {.v = clipurl } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY|ShiftMask,             XK_Tab,    spawn,          {.v = reload } },
 	{ MODKEY,                       XK_a,  togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_h,      focusstack,     {.i = +1 } },
@@ -177,6 +179,7 @@ static const Key keys[] = {
 	{ MODKEY|Mod4Mask,              XK_0,      togglegaps,     {0} },
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_0,      defaultgaps,    {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
+	{ MODKEY|Mod4Mask|ShiftMask,    XK_F12,    livereloadxrdb, {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
