@@ -25,10 +25,13 @@ fn_vr() {
         # Modify dwm config to use rxvt-unicode if on a VM (don't use gpu ac)
         sed -i 's/static const char \*termcmd\[\]  = { "", NULL };/static const char \*termcmd\[\]  = { "urxvt", NULL };/' "$HOME/suckless/dwm/config.def.h"
         DPN+=("rxvt-unicode")
+        TERM="urxvt"
+
     elif [[ "$VIR" =~ ^[nN]$ || -z "$VIR" ]]; then
         # Modify dwm config to use kitty if not on a VM
         sed -i 's/static const char \*termcmd\[\]  = { "", NULL };/static const char \*termcmd\[\]  = { "kitty", NULL };/' "$HOME/suckless/dwm/config.def.h"
         DPN+=("kitty")
+        TERM="kitty"
     else
         echo -e "Invalid input. Please enter 'y' for yes or 'n' for no.\n"
         fn_vr 
@@ -309,6 +312,13 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
+cd "$HOME/suckless/dwmblocks" || { echo "Failed to change directory to $HOME/suckless/dwmblocks"; exit 1; }
+sudo make clean install 
+if [[ $? -ne 0 ]]; then
+    echo "Error installing dwmblocks."
+    exit 1
+fi
+
 echo -e "
 -------------------------------------------------------------------------
                        Setting Up Git and Generating SSH Key
@@ -443,6 +453,15 @@ echo -e "
 -------------------------------------------------------------------------
 "
 cp "$HOME/repo/assests/resources/.Xresources" "$HOME/.Xresources"
+echo -e "
+-------------------------------------------------------------------------
+                       Setup Scripts
+            ^Note: located at ~/.local/bin
+-------------------------------------------------------------------------
+"
+rsync -av --exclude='.Xresources' "$HOME/repo/assests/resources/" "$HOME/.local/bin/"
+chmod +x "$HOME/repo/assests/resources/*"
+
 
 echo -e "
 -------------------------------------------------------------------------
@@ -472,12 +491,15 @@ rm -rf "$HOME/.xinitrc"
 
 cat << EOF > "$HOME/.xinitrc"
 export BROWSER=$PerBrowser
+export EDITOR="code-oss" # for now
+export TERMINAL="$TERM"
+
 [[ -f ~/.Xresources ]] && xrdb -merge -I\$HOME ~/.Xresources
 feh --bg-fill "\$HOME/Pictures/Wallpapers/1.jpg" &
 xrandr --dpi 130 &
-
 picom &
 clipmenud &
+dwmblocks &
 
 exec dwm
 EOF
