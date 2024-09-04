@@ -3,6 +3,6 @@ dwm , dmenu , setup script
 
 ## Things to add 
 
-- [ ] dwmblocks
+- [x] dwmblocks
 
 - [ ] zsh
