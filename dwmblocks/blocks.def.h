@@ -1,7 +1,7 @@
 static const Block blocks[] = {
 	/*Icon*/	/*Command*/		/*Update Interval*/	/*Update Signal*/
 	{"", "mem.sh",	20,		0},
-	{"", "cpu.sh",	5,		0},
+	{"^c#B97E11^TEST", "cpu.sh",	5,		5},
 
 
 	{"", "clock.sh",					45,		0},
