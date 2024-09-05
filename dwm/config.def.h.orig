@@ -46,9 +46,6 @@ static char *colors[][3] = {
 
 
 
-/* staticstatus */
-static const int statmonval = 0;
-
 /* tagging */
 static const char *tags[] = { "󰈹", "2", "3", "4", "5" };
 static const char *tagsalt[] = { "1", "2", "3", "4", "5"};
