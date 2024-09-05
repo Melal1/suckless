@@ -361,25 +361,6 @@ if [[ "$BROWSER_CHOICE" == "3" ]]; then
 fi
 
 
-sudo cat << 'CLEND' > "$HOME/clipmenu-url"
-#!/usr/bin/env bash
-
-files=($XDG_RUNTIME_DIR/clipmenu.6.$USER/*)
-
-newest=${files[0]}
-for f in "${files[@]}"; do
-	if [[ $f -nt $newest ]]; then
-		newest=$f
-	fi
-done
-if url=$(grep --max-count=1 --only-matching --perl-regexp "http(s?):\/\/[^ \"\(\)\<\>\]]*" "$newest"); then
-	xdg-open $url
-fi
-
-CLEND
-sudo mv $HOME/clipmenu-url /usr/bin/
-sudo chmod +x /usr/bin/clipmenu-url
-
 echo -e "
 -------------------------------------------------------------------------
                        Installing Audio Server

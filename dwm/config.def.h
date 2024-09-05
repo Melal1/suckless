@@ -141,7 +141,8 @@ static const char *termcmd[]  = { "kitty", NULL };
 static const char *browser[] = {"zen-browser", NULL} ;
 static const char *clipmenu[] = {"clipmenu", "-i", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL} ;
 static const char *clipurl[] = {"clipmenu-url", NULL} ;
-static const char *reload[] = { "reloadtheme.sh", NULL };
+static const char *reload[] = { "reloadtheme", NULL };
+static const char *add[] = { "adding", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "kitty", "-t", scratchpadname, "-g", "120x34", NULL };
 
@@ -154,6 +155,7 @@ static const Key keys[] = {
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_v,      spawn,          {.v = clipurl } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ShiftMask,             XK_Tab,    spawn,          {.v = reload } },
+	{ MODKEY|ShiftMask,             XK_F1,     spawn,          {.v = add } },
 	{ MODKEY,                       XK_a,  togglescratch,  {.v = scratchpadcmd } },
 	{ MODKEY,						XK_minus,      spawn,  TCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-; kill -50 $(pidof dwmblocks)") },
 	{ MODKEY|ShiftMask,				XK_minus,      spawn,  TCMD("wpctl set-volume @DEFAULT_AUDIO_SINK@ 15%-; kill -50 $(pidof dwmblocks)") },
