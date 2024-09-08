@@ -361,6 +361,15 @@ if [[ "$BROWSER_CHOICE" == "3" ]]; then
 fi
 
 
+    echo -e "
+-------------------------------------------------------------------------
+                         Installing oh-my-posh
+-------------------------------------------------------------------------
+    "   
+curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/.local/bin
+mkdir -p $HOME/.config/zsh/prompt/
+cp $HOME/repo/assests/resources/promptconf.toml $HOME/zsh/prompt/promptconf.toml
+
 echo -e "
 -------------------------------------------------------------------------
                        Installing Audio Server
