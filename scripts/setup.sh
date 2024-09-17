@@ -1,4 +1,7 @@
 #!/bin/bash
+# todo 
+#     luarocks --local --lua-version=5.1 install magick
+#     sudo npm i -g bash-language-server
 
 set -e  # Exit on command failure
 
@@ -113,8 +116,8 @@ echo -e "
 # Set keyboard layouts and layout switch key combination
 localectl set-x11-keymap us,ara ,pc101 qwerty grp:win_space_toggle
 if [[ $? -ne 0 ]]; then
-    echo "Error setting keyboard layouts."
-    exit 1
+  echo "Error setting keyboard layouts."
+  exit 1
 fi
 
 
@@ -152,15 +155,15 @@ fn_aur
 cd "$HOME/repo/" || { echo "Failed to change directory to $HOME/repo/"; exit 1; }
 git clone "https://aur.archlinux.org/$aur.git"
 if [[ $? -ne 0 ]]; then
-    echo "Error cloning AUR repository."
-    exit 1
+  echo "Error cloning AUR repository."
+  exit 1
 fi
 
 cd "$aur" || { echo "Failed to change directory to $aur"; exit 1; }
 makepkg -si --noconfirm
 if [[ $? -ne 0 ]]; then
-    echo "Error installing AUR package."
-    exit 1
+  echo "Error installing AUR package."
+  exit 1
 fi
 
 echo -e "

@@ -142,8 +142,9 @@ ResourcePref resources[] = {
 
 
 static const char *termcmd[]  = { "kitty", NULL };
+static const char *termux[]  = { "kitty", "--hold" , "tmux" , "a" , NULL };
 static const char *browser[] = {"zen-browser", NULL} ;
-static const char *clipmenu[] = {"clipmenu", "-i", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL} ;
+static const char *clipmenu[] = {"clipcat-menu", NULL} ;
 static const char *clipurl[] = {"clipmenu-url", NULL} ;
 static const char *reload[] = { "reloadtheme", NULL };
 static const char *add[] = { "adding", NULL };
@@ -159,6 +160,7 @@ static const Key keys[] = {
 	/*{ MODKEY|Mod4Mask|ShiftMask,    XK_v,      spawn,          {.v = clipurl } }, */
 	{ MODKEY|Mod4Mask|ShiftMask,						XK_v,      spawn,  TCMD("clipmenu-url") },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,             XK_Return, spawn,          {.v = termux } },
 	{ MODKEY|ShiftMask,             XK_Tab,    spawn,          {.v = reload } },
 	{ MODKEY|ShiftMask,             XK_F1,     spawn,          {.v = add } },
 	{ MODKEY,                       XK_a,  togglescratch,  {.v = scratchpadcmd } },
